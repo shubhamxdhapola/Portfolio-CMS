@@ -20,7 +20,7 @@ export default function CertificationsCms() {
   const { showToast } = useOutletContext();
   const { refreshData } = usePortfolioData();
 
-  const categories = ['Software Development', 'Frontend', 'Backend', 'Core CS', 'Software Engineering', 'Cloud'];
+  const categories = ['Software Development', 'Full Stack', 'Frontend', 'Backend', 'Core CS', 'Artifical Intelligence', 'Cloud', 'Tools', 'Other'];
 
   useEffect(() => {
     fetchData();
