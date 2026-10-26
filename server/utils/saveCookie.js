@@ -17,7 +17,7 @@ export const clearCookie = (_, res) => {
   const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production',
+    sameSite: isProduction ? 'none' : 'lax',
   };
   res.clearCookie('access_token', cookieOptions);
 };
