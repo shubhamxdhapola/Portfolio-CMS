@@ -3,29 +3,38 @@ import User from '../models/user.model.js';
 
 export const authenticate = async (req, res, next) => {
   try {
-    let token = req.cookies?.token || req.cookies?.admin_token;
-    if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
-      token = req.headers.authorization.split(' ')[1];
-    }
+    let token = req?.cookies?.access_token;
     if (!token) {
-      return res.status(401).json({ success: false, message: 'Unauthorized - No token provided' });
+      return res.status(401).json({
+        success: false,
+        message: 'Unauthorized - No token provided'
+      });
     }
 
-    const secret = process.env.JWT_SECRET;
-    jwt.verify(token, secret, async (err, decodedToken) => {
+    jwt.verify(token, process.env.JWT_SECRET, async (err, decodedToken) => {
       if (err) {
-        return res.status(401).json({ success: false, message: 'Unauthorized - Invalid or expired token' });
+        return res.status(401).json({
+          success: false,
+          message: 'Unauthorized - Invalid or expired token'
+        });
       }
 
-      const userId = decodedToken.userId || decodedToken.id;
-      const user = await User.findById(userId).select('+tokenVersion +password');
+      const userId = decodedToken.userId;
+      const user =
+        await User.findById(userId).select('+tokenVersion');
 
       if (!user) {
-        return res.status(401).json({ success: false, message: 'Unauthorized - User not found' });
+        return res.status(401).json({
+          success: false,
+          message: 'Unauthorized - User not found'
+        });
       }
 
       if (user.isActive === false) {
-        return res.status(403).json({ success: false, message: 'Account has been deactivated' });
+        return res.status(403).json({
+          success: false,
+          message: 'Account has been deactivated'
+        });
       }
 
       if (
@@ -33,7 +42,10 @@ export const authenticate = async (req, res, next) => {
         user.tokenVersion !== undefined &&
         decodedToken.tokenVersion !== user.tokenVersion
       ) {
-        return res.status(401).json({ success: false, message: 'Session expired, please login again' });
+        return res.status(401).json({
+          success: false,
+          message: 'Session expired, please login again'
+        });
       }
 
       req.user = user;

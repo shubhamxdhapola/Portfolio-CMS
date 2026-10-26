@@ -20,20 +20,7 @@ app.use(cookieParser());
 // CORS configuration
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      const isVercel = origin.endsWith('.vercel.app');
-      const isLocalhost = origin.includes('localhost') || origin.includes('127.0.0.1');
-      const isClientUrl =
-        process.env.CLIENT_URL &&
-        (origin === process.env.CLIENT_URL.replace(/\/$/, '') || origin === process.env.CLIENT_URL);
-
-      if (isVercel || isLocalhost || isClientUrl || process.env.NODE_ENV !== 'production') {
-        callback(null, true);
-      } else {
-        callback(null, false);
-      }
-    },
+    origin: process.env.ORIGIN,
     credentials: true,
   })
 );

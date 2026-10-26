@@ -1,28 +1,25 @@
-export const saveCookie = (token, req, res) => {
-  const host = req?.headers?.host || '';
-  const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
+const isProduction = process.env.NODE_ENV === 'production';
+
+export const saveCookie = (token, _, res) => {
   const cookieOptions = {
     httpOnly: true,
-    secure: !isLocalhost,
-    sameSite: isLocalhost ? 'lax' : 'none',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: '/',
   };
 
-  res.cookie('token', token, cookieOptions);
-  res.cookie('admin_token', token, cookieOptions);
+  res.cookie('access_token', token, cookieOptions);
 };
 
-export const clearCookie = (req, res) => {
-  const host = req?.headers?.host || '';
-  const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
+export const clearCookie = (_, res) => {
+
   const cookieOptions = {
     httpOnly: true,
-    secure: !isLocalhost,
-    sameSite: isLocalhost ? 'lax' : 'none',
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production',
   };
-
-  res.clearCookie('token', cookieOptions);
-  res.clearCookie('admin_token', cookieOptions);
+  res.clearCookie('access_token', cookieOptions);
 };
 
 export default saveCookie;
