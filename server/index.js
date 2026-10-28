@@ -18,9 +18,19 @@ app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 app.use(cookieParser());
 
 // CORS configuration
+const allowedOrigins = process.env.ORIGIN
+  .split(",")
+  .map((origin) => origin.trim());
+
 app.use(
   cors({
-    origin: process.env.ORIGIN,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
